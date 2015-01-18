@@ -149,3 +149,5 @@ Spring.prototype.configuration = function() {
         { label: 'Damping', read: this.damping.bind(this), write: setSpringDamping.bind(this, this), min: 1, max: 500 }
     ];
 }
+
+module.exports = Spring;

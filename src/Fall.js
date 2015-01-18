@@ -15,6 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+var Spring = require('Spring');
+var Gravity = require('Gravity');
+
 /***
  * Fall with Soft Landing simulation. This is an example of combining simulations
  * to create something new. Here we're combining gravity with a spring: the value
@@ -85,3 +88,5 @@ Fall.prototype.configuration = function() {
     config.push.apply(config, this._spring.configuration());
     return config;
 }
+
+module.exports = Fall;

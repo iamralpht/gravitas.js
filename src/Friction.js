@@ -63,3 +63,5 @@ Friction.prototype.configuration = function() {
         }
     ];
 }
+
+module.exports = Friction

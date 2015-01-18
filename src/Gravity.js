@@ -61,51 +61,5 @@ Gravity.prototype.configuration = function() {
     ];
 }
 
-/**
- * This is an adaptation of Gravity to have a "floor" at 0. When the object hits
- * the floor its velocity is inverted so that it bounces.
- */
-function GravityWithBounce(acceleration, absorb) {
-    this._gravity = new Gravity(acceleration, 0);
-    this._absorb = absorb || 0.8;
-    this._reboundedLast = false;
-}
-GravityWithBounce.prototype.set = function(x, v) { this._gravity.set(x, v); }
-GravityWithBounce.prototype.x = function() {
-    var x = this._gravity.x();
-    // If x goes past zero then we're travelling under the floor, so invert
-    // the velocity.
-    // The end condition here is hacky; if we rebound two frames in a row then
-    // we decide we're done. Don't skip too many frames!
-    if (x > 0) {
-        if (this._reboundedLast) return 0;
-        this._reboundedLast = true;
-        var v = this._gravity.dx();
-        if (Math.abs(v * this._absorb) > Math.abs(this._gravity._a * 2) / 60)
-            this._gravity.set(0, -v * this._absorb);
-        return 0;
-    }
-    this._reboundedLast = false;
-    return x;
-}
-GravityWithBounce.prototype.dx = function() { return this._gravity.dx(); }
-GravityWithBounce.prototype.done = function() {
-    return this._gravity.x() > 1;
-}
-GravityWithBounce.prototype.reconfigure = function(a, absorb) {
-    this._gravity.reconfigure(a);
-    this._absorb = absorb || 0.8;
-}
-GravityWithBounce.prototype.configuration = function() {
-    var self = this;
-    var conf = this._gravity.configuration();
-    conf.push({
-        label: 'Rebound',
-        read: function() { return self._absorb; },
-        write: function(val) { self._absorb = val; },
-        min: 0,
-        max: 1.1,
-        step: 0.1
-    });
-    return conf;
-}
+module.exports = Gravity;
+
