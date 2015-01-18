@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var Gravity = require('gravity');
+var Gravity = require('./Gravity.js');
 /**
  * This is an adaptation of Gravity to have a "floor" at 0. When the object hits
  * the floor its velocity is inverted so that it bounces.

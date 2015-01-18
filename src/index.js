@@ -16,10 +16,16 @@ limitations under the License.
 */
 
 var Gravitas = {
-    Spring: require('Spring'),
-    Gravity: require('Gravity'),
-    GravityWithBounce: require('GravityWithBounce'),
-    Friction: require('Friction')
+    // Basic essentials.
+    Spring: require('./Spring.js'),
+    Gravity: require('./Gravity.js'),
+    Friction: require('./Friction.js'),
+    // Composites.
+    GravityWithBounce: require('./GravityWithBounce.js'),
+    Fall: require('./Fall.js')
 }
 
-if (module) module.exports = Gravitas;
+// Hacky. Not sure what the best way to do this is...
+window.Gravitas = Gravitas;
+
+module.exports = Gravitas;
