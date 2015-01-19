@@ -27,7 +27,4 @@ var Gravitas = {
     createAnimation: require('./CreateAnimation.js')
 }
 
-// Hacky. Not sure what the best way to do this is...
-window.Gravitas = Gravitas;
-
 module.exports = Gravitas;
