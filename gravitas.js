@@ -1,5 +1,51 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
+
+/*
+Copyright 2014 Ralph Thomas
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+// This function sets up a requestAnimationFrame-based timer which calls
+// the callback every frame while the physics model is still moving.
+// It returns a function that may be called to cancel the animation.
+function createAnimation(physicsModel, callback) {
+    
+    function onFrame(handle, model, cb) {
+        if (handle && handle.cancelled) return;
+        cb(model);
+        if (!physicsModel.done() && !handle.cancelled) {
+            handle.id = requestAnimationFrame(onFrame.bind(null, handle, model, cb));
+        }
+    }
+    function cancel(handle) {
+        if (handle && handle.id)
+            cancelAnimationFrame(handle.id);
+        if (handle)
+            handle.cancelled = true;
+    }
+
+    var handle = { id: 0, cancelled: false };
+    onFrame(handle, physicsModel, callback);
+
+    return { cancel: cancel.bind(null, handle), model: physicsModel };
+}
+
+module.exports = createAnimation;
+
+},{}],2:[function(require,module,exports){
+'use strict';
 /*
 Copyright 2014 Ralph Thomas
 
@@ -92,7 +138,7 @@ Fall.prototype.configuration = function() {
 
 module.exports = Fall;
 
-},{"./Gravity.js":3,"./Spring.js":5}],2:[function(require,module,exports){
+},{"./Gravity.js":4,"./Spring.js":6}],3:[function(require,module,exports){
 'use strict';
 /*
 Copyright 2014 Ralph Thomas
@@ -161,7 +207,7 @@ Friction.prototype.configuration = function() {
 
 module.exports = Friction
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 /*
 Copyright 2014 Ralph Thomas
@@ -228,7 +274,7 @@ Gravity.prototype.configuration = function() {
 module.exports = Gravity;
 
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 /*
 Copyright 2014 Ralph Thomas
@@ -298,7 +344,7 @@ GravityWithBounce.prototype.configuration = function() {
 
 module.exports = GravityWithBounce;
 
-},{"./Gravity.js":3}],5:[function(require,module,exports){
+},{"./Gravity.js":4}],6:[function(require,module,exports){
 'use strict';
 /*
 Copyright 2014 Ralph Thomas
@@ -453,7 +499,7 @@ Spring.prototype.configuration = function() {
 
 module.exports = Spring;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 /*
 Copyright 2014 Ralph Thomas
@@ -478,7 +524,9 @@ var Gravitas = {
     Friction: require('./Friction.js'),
     // Composites.
     GravityWithBounce: require('./GravityWithBounce.js'),
-    Fall: require('./Fall.js')
+    Fall: require('./Fall.js'),
+    // Utilities
+    createAnimation: require('./CreateAnimation.js')
 }
 
 // Hacky. Not sure what the best way to do this is...
@@ -486,4 +534,4 @@ window.Gravitas = Gravitas;
 
 module.exports = Gravitas;
 
-},{"./Fall.js":1,"./Friction.js":2,"./Gravity.js":3,"./GravityWithBounce.js":4,"./Spring.js":5}]},{},[6]);
+},{"./CreateAnimation.js":1,"./Fall.js":2,"./Friction.js":3,"./Gravity.js":4,"./GravityWithBounce.js":5,"./Spring.js":6}]},{},[7]);

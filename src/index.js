@@ -22,7 +22,9 @@ var Gravitas = {
     Friction: require('./Friction.js'),
     // Composites.
     GravityWithBounce: require('./GravityWithBounce.js'),
-    Fall: require('./Fall.js')
+    Fall: require('./Fall.js'),
+    // Utilities
+    createAnimation: require('./CreateAnimation.js')
 }
 
 // Hacky. Not sure what the best way to do this is...
