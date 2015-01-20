@@ -17,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/iamralpht/gravitas.js/issues"
   },
-  "homepage": "https://github.com/iamralpht/gravitas.js"
+  "homepage": "https://github.com/iamralpht/gravitas.js",
+  "scripts": {
+    "build": "webpack src/index.js dist/gravitas.js",
+    "build-min": "COMPRESS=1 webpack src/index.js dist/gravitas.min.js"
+  },
+  "devDependencies": {
+    "webpack": "^1.5.1"
+  }
 }
