@@ -1,0 +1,28 @@
+{
+  "name": "gravitas",
+  "version": "0.1.0",
+  "description": "Super fast physics simulations for JavaScript",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamralpht/gravitas.js.git"
+  },
+  "keywords": [
+    "physics",
+    "simulation",
+    "javascript"
+  ],
+  "author": "Ralph Thomas <ralpht@gmail.com> (https://github.com/iamralpht)",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/iamralpht/gravitas.js/issues"
+  },
+  "homepage": "https://github.com/iamralpht/gravitas.js",
+  "scripts": {
+    "build": "webpack src/index.js dist/gravitas.js",
+    "build-min": "COMPRESS=1 webpack src/index.js dist/gravitas.min.js"
+  },
+  "devDependencies": {
+    "webpack": "^1.5.1"
+  }
+}
