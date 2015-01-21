@@ -63,6 +63,7 @@ ConstantVelocity.prototype.configuration = function() {
 // The other simulation is a gesture controlled friction
 // simulation.
 function iTunesRadioDemo(element) {
+    var imagePrefix = window.imagePrefix ? window.imagePrefix : '';
     function makeStack(image, labelContent) {
         var stack = document.createElement('div');
         stack.className = 'stack';
@@ -72,7 +73,7 @@ function iTunesRadioDemo(element) {
             // iTunes radio looks suspiciously like it uses the same image for
             // all covers and just moves them around to make the borders look
             // unique. An excellent strategy!
-            cover.style.backgroundImage = 'url(' + image + ')';
+            cover.style.backgroundImage = 'url(' + imagePrefix + image + ')';
 
             stack.appendChild(cover);
             // Translate the cover backwards in Z so that the perspective effect

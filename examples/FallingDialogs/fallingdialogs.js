@@ -101,6 +101,7 @@ Dialog.prototype.reset = function() {
 // a spring) to make a soft landing for our daring dialog.
 //
 function FallingDialogsDemo(element, squishy, rotate) {
+    if (!element) return;
     this._element = element;
     this._element.classList.add('dialogs');
 

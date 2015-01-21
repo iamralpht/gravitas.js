@@ -44,6 +44,7 @@ function registerGlobalListener() {
         if (!listener) return;
 
         e.preventDefault();
+        e.stopPropagation();
         if (e.type == 'touchstart') {
             touchInfo.trackingID = e.changedTouches[0].identifier;
             touchInfo.x = e.changedTouches[0].pageX;
@@ -80,6 +81,7 @@ function registerGlobalListener() {
     function touchMove(e) {
         if (touchInfo.trackingID == -1) return;
         e.preventDefault();
+        e.stopPropagation();
         var delta = findDelta(e);
         if (!delta) return;
         touchInfo.maxDy = Math.max(touchInfo.maxDy, Math.abs(delta.y));
@@ -104,6 +106,7 @@ function registerGlobalListener() {
     function touchEnd(e) {
         if (touchInfo.trackingID == -1) return;
         e.preventDefault();
+        e.stopPropagation();
         var delta = findDelta(e);
         if (!delta) return;
 
@@ -142,12 +145,12 @@ function registerGlobalListener() {
             listener.onTouchEnd(delta.x, delta.y, velocity);
     }
 
-    document.body.addEventListener('touchstart', touchStart, false);
-    document.body.addEventListener('touchmove', touchMove, false);
-    document.body.addEventListener('touchend', touchEnd, false);
-    document.body.addEventListener('mousedown', touchStart, false);
-    document.body.addEventListener('mousemove', touchMove, false);
-    document.body.addEventListener('mouseup', touchEnd, false);
+    document.body.addEventListener('touchstart', touchStart, true);
+    document.body.addEventListener('touchmove', touchMove, true);
+    document.body.addEventListener('touchend', touchEnd, true);
+    document.body.addEventListener('mousedown', touchStart, true);
+    document.body.addEventListener('mousemove', touchMove, true);
+    document.body.addEventListener('mouseup', touchEnd, true);
 }
 
 //

@@ -1,0 +1,105 @@
+@font-face {
+    font-family: 'Roboto';
+    src: url('img/Roboto-Regular.ttf') format('truetype');
+    font-weight: normal;
+}
+
+body {
+    overflow: hidden;
+    background-color: #404040;
+    margin: 0;
+    text-align: center;
+    font-family: 'Roboto';
+}
+.phone, .fabExample {
+    display: inline-block;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+
+    background-image: url(img/inbox.png);
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    max-width: 320px;
+    max-height: 420px;
+    overflow: hidden;
+}
+.hint {
+    display: inline-block;
+    position: absolute;
+
+    top: -webkit-calc(50% + 220px);
+    left: 10%;
+    right: 10%;
+    color: white;
+}
+.fab-menu {
+    position: absolute;
+    top: 0; left: 0;
+    right: 10px;
+    bottom: 10px;
+}
+.fab-menu-item {
+    position: absolute;
+    height: 80px;
+    width: 320px;
+    bottom: 0px;
+    right: 0px;
+}
+.fab-mask {
+    position: absolute;
+
+    width: 640px;
+    height: 640px;
+    top:  50px;
+    left: -40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.7);/*rgba(255,255,255,0.7);*/
+    -webkit-transform: scale(0.01);
+}
+/* The app we're launching. It should be centered underneath the icon, but doesn't move horizontally with
+ * the icon...
+ */
+.fab-icon {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    right: 0;
+    top: 10px;
+    border-radius: 30px;
+    background-color: #d23f31;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    background-size: cover;
+    background-position: center;
+
+    overflow: hidden;
+    line-height: 60px;
+    font-size: 30px;
+    color: white;
+}
+.fab-label {
+    position: absolute;
+    left: 0;
+    right: 75px;
+    height: 80px;
+    line-height: 80px;
+    text-align: right;
+    font-size: 18px;
+    overflow: hidden;
+    color: white;
+}
+.fab-launch {
+    position: absolute;
+    width: 320px;
+    height: 400px;
+    right: -130px;
+    top: -160px;
+
+    background-image: url(img/compose.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    -webkit-clip-path: circle(0px);
+    -webkit-clip-path: circle(50%, 50%, 0px);
+}
