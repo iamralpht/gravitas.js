@@ -19,116 +19,6 @@ limitations under the License.
 (function() {
 
 var overdamp = window.location.href.indexOf('overdamp') != -1;
-
-var epsilon = 0.001;
-function almostEqual(a, b, epsilon) { return (a > (b - epsilon)) && (a < (b + epsilon)); }
-function almostZero(a, epsilon) { return almostEqual(a, 0, epsilon); }
-
-/***
- * Simple Spring implementation -- this implements a damped spring using a symbolic integration
- * of Hooke's law: F = -kx - cv. This solution is significantly more performant and less code than
- * a numerical approach such as Facebook Rebound which uses RK4.
- *
- * This physics textbook explains the model:
- *  http://www.stewartcalculus.com/data/CALCULUS%20Concepts%20and%20Contexts/upfiles/3c3-AppsOf2ndOrders_Stu.pdf
- */
-function Spring(mass, springConstant, damping) {
-    this._m = mass;
-    this._k = springConstant;
-    this._c = damping;
-    this._solution = null;
-    this._endPosition = 0;
-    this._startTime = 0;
-}
-Spring.prototype._solve = function(initial, velocity) {
-    var c = this._c;
-    var m = this._m;
-    var k = this._k;
-    // Solve the quadratic equation; root = (-c +/- sqrt(c^2 - 4mk)) / 2m.
-    var cmk = c * c - 4 * m * k;
-    if (cmk == 0) {
-        // The spring is critically damped.
-        // x = (c1 + c2*t) * e ^(-c/2m)*t
-        var r = -c / (2 * m);
-        var c1 = initial;
-        var c2 = velocity / (r * initial);
-        return {
-            x: function(t) { return (c1 + c2 * t) * Math.pow(Math.E, r * t); },
-            dx: function(t) { var pow = Math.pow(Math.E, r * t); return r * (c1 + c2 * t) * pow + c2 * pow; }
-        };
-    } else if (cmk > 0) {
-        // The spring is overdamped; no bounces.
-        // x = c1*e^(r1*t) + c2*e^(r2t)
-        // Need to find r1 and r2, the roots, then solve c1 and c2.
-        var r1 = (-c - Math.sqrt(cmk)) / (2 * m);
-        var r2 = (-c + Math.sqrt(cmk)) / (2 * m);
-        var c2 = (velocity - r1 * initial) / (r2 - r1);
-        var c1 = initial - c2;
-
-        return {
-            x: function(t) { return (c1 * Math.pow(Math.E, r1 * t) + c2 * Math.pow(Math.E, r2 * t)); },
-            dx: function(t) { return (c1 * r1 * Math.pow(Math.E, r1 * t) + c2 * r2 * Math.pow(Math.E, r2 * t)); }
-            };
-    } else {
-        // The spring is underdamped, it has imaginary roots.
-        // r = -(c / 2*m) +- w*i
-        // w = sqrt(4mk - c^2) / 2m
-        // x = (e^-(c/2m)t) * (c1 * cos(wt) + c2 * sin(wt))
-        var w = Math.sqrt(4*m*k - c*c) / (2 * m);
-        var r = -(c / 2*m);
-        var c1= initial;
-        var c2= (velocity - r * initial) / w;
-            
-        return {
-            x: function(t) { return Math.pow(Math.E, r * t) * (c1 * Math.cos(w * t) + c2 * Math.sin(w * t)); },
-            dx: function(t) {
-                var power =  Math.pow(Math.E, r * t);
-                var cos = Math.cos(w * t);
-                var sin = Math.sin(w * t);
-                return power * (c2 * w * cos - c1 * w * sin) + r * power * (c2 * sin + c1 * cos);
-            }
-        };
-    }
-}
-Spring.prototype.x = function(t) {
-    if (!t) t = (new Date()).getTime();
-    return this._solution ? this._endPosition + this._solution.x((t - this._startTime) / 1000.0) : 0;
-}
-Spring.prototype.dx = function(t) {
-    if (!t) t = (new Date()).getTime();
-    return this._solution ? this._solution.dx((t - this._startTime) / 1000.0) : 0;
-}
-Spring.prototype.setEnd = function(x, t) {
-    if (!t) t = (new Date()).getTime();
-    if (x == this._endPosition) return;
-    var velocity = 0;
-    var position = this._endPosition;
-    if (this._solution) {
-        velocity = this._solution.dx((t - this._startTime) / 1000.0);
-        position = this._solution.x((t - this._startTime) / 1000.0);
-        if (almostZero(velocity, epsilon)) velocity = 0;
-        if (almostZero(position, epsilon)) position = 0;
-        position += this._endPosition;
-    }
-    if (this._solution && almostZero(position - x, epsilon) && almostZero(velocity, epsilon))
-        return;
-    this._endPosition = x;
-    this._solution = this._solve(position - this._endPosition, velocity);
-    this._startTime = t;
-}
-Spring.prototype.snap = function(x) {
-    this._startTime = (new Date()).getTime();
-    this._endPosition = x;
-    this._solution = {
-        x: function() { return 0; },
-        dx: function() { return 0; }
-    };
-}
-Spring.prototype.done = function(t) {
-    if (!t) t = (new Date()).getTime();
-    return almostEqual(this.x(), this._endPosition, epsilon) && almostZero(this.dx(), epsilon);
-}
-
 /*
  * Now the interesting bit, a FAB menu item. The menu item has a spring which moves it from its natural layout
  * position to being against the current cursor position. The menu has a separate spring which moves menu items
@@ -156,7 +46,7 @@ function MenuItem(title, image) {
     }
     this._container.appendChild(this._icon);
     // We need a spring to tell us how far away we should be from the cursor.
-    this._spring = new Spring(1, 400, overdamp ? 45 : 30); // 400 / 30 is slightly underdamped, so there will be a slight overbounce.
+    this._spring = new Gravitas.Spring(1, 400, overdamp ? 45 : 30); // 400 / 30 is slightly underdamped, so there will be a slight overbounce.
 }
 MenuItem.prototype.element = function() { return this._container; }
 MenuItem.prototype.icon = function() { return this._icon; }
@@ -179,9 +69,9 @@ var STICKINESS = 20; // How "sticky" an item is as you start to track left.
  */
 function FloatingActionButton(title, image, items) {
     // The spring that opens the menu.
-    this._openSpring = new Spring(1, 400, overdamp ? 40 : 25);
-    this._cursorSpring = new Spring(1, 300, overdamp ? 30 : 20);
-    this._maskSpring = new Spring(1, 800, 80);
+    this._openSpring = new Gravitas.Spring(1, 400, overdamp ? 40 : 25);
+    this._cursorSpring = new Gravitas.Spring(1, 300, overdamp ? 30 : 20);
+    this._maskSpring = new Gravitas.Spring(1, 800, 80);
     this._container = document.createElement('div');
     this._container.className = 'fab-menu';
     this._mask = document.createElement('div');
@@ -208,6 +98,7 @@ function FloatingActionButton(title, image, items) {
     function touchStart(e) {
         if (touchInfo.trackingID != -1) return;
         e.preventDefault();
+        e.stopPropagation();
         if (e.type == 'touchstart') {
             touchInfo.trackingID = e.changedTouches[0].identifier;
             touchInfo.x = e.changedTouches[0].pageX;
@@ -242,6 +133,7 @@ function FloatingActionButton(title, image, items) {
     function touchMove(e) {
         if (touchInfo.trackingID == -1) return;
         e.preventDefault();
+        e.stopPropagation();
         var delta = findDelta(e);
         if (!delta) return;
         self._updateCursor(delta.y, delta.x, true);
@@ -250,6 +142,7 @@ function FloatingActionButton(title, image, items) {
     function touchEnd(e) {
         if (touchInfo.trackingID == -1) return;
         e.preventDefault();
+        e.stopPropagation();
         var delta = findDelta(e);
         if (!delta) return;
 
@@ -262,9 +155,9 @@ function FloatingActionButton(title, image, items) {
         self._layout();
     }
 
-    this._cursor.element().addEventListener('touchstart', touchStart, false);
-    this._cursor.element().addEventListener('touchmove', touchMove, false);
-    this._cursor.element().addEventListener('touchend', touchEnd, false);
+    this._cursor.element().addEventListener('touchstart', touchStart, true);
+    this._cursor.element().addEventListener('touchmove', touchMove, true);
+    this._cursor.element().addEventListener('touchend', touchEnd, true);
     
     document.body.addEventListener('mousedown', touchStart, false);
     document.body.addEventListener('mousemove', touchMove, false);
