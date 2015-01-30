@@ -57,6 +57,7 @@ function TwoDScrollingDemo(element) {
     hammer.on("panstart panmove panend pancancel", this.onPan.bind(this));
 }
 TwoDScrollingDemo.prototype.onPan = function(e) {
+    e.preventDefault();
     if (e.type == 'panstart') {
         if (this._animation) {
             this._animation.cancel();
