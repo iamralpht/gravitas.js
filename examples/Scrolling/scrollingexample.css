@@ -1,0 +1,45 @@
+.scrollingdemo>.scrolling-outer {
+    display: inline-block;
+    width: 320px;
+    height: 320px;
+    background-color: white;
+    text-align: left;
+    color: black;
+    margin: 10px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.scrollingdemo>.scrolling-outer>.scrolling-inner {
+    pointer-events: none;
+    position: absolute;   
+    top: 0; left: 0; right: 0;
+    margin: 0;
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.scrollingdemo .scrolling-list-item {
+    margin: 0;
+    height: 80px;
+    padding-left: 100px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+}
+.scrollingdemo .scrolling-list-item:last-child {
+    border-bottom: none;
+}
+.scrollingdemo .scrolling-list-item>.scrolling-list-img {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    top: 0; left: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.scrollingdemo .scrolling-list-item>span {
+    line-height: 80px;
+}
+
