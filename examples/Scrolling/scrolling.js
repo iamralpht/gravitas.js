@@ -80,12 +80,22 @@ Scroll.prototype.configuration = function() {
     return config;
 }
 
-var UNDERSCROLL_TRACKING = 0.5;
+// Apparently this is the iOS underscroll equation: https://twitter.com/chpwn/status/285540192096497664
+function underscroll(x, length, constant) {
+    if (!constant) constant = 0.55;
+    return (x * length * constant) / (length + x * constant);
+}
+function inverseUnderscroll(x, length, constant) {
+    if (!constant) constant = 0.55;
+    // This is just the algebraic inversion of the equation above. underscroll(inverseUnderscroll(x, l), l) == x.
+    return (x * length) / (constant * (length - x));
+}
 
 function ScrollHandler(element) {
     this._element = element;
     this._position = 0;
-    this._extent = this._element.offsetHeight - this._element.parentElement.offsetHeight;
+    this._length = this._element.parentElement.offsetHeight;
+    this._extent = this._element.offsetHeight - this._length;
     this._scroll = new Scroll(this._extent);
 }
 ScrollHandler.prototype.onTouchStart = function() {
@@ -95,9 +105,9 @@ ScrollHandler.prototype.onTouchStart = function() {
     // tracking in onTouchMove if the view is currently outside of the valid
     // scroll constraints.
     if (this._startPosition > 0)
-        this._startPosition /= UNDERSCROLL_TRACKING;
+        this._startPosition = inverseUnderscroll(this._startPosition, this._length);
     else if (this._startPosition < -this._extent)
-        this._startPosition = (this._startPosition + this._extent) / UNDERSCROLL_TRACKING - this._extent;
+        this._startPosition = inverseUnderscroll(this._startPosition + this._extent, this._length) - this._extent;
 
     if (this._animation) this._animation.cancel();
 
@@ -108,8 +118,8 @@ ScrollHandler.prototype.onTouchStart = function() {
 }
 ScrollHandler.prototype.onTouchMove = function(dx, dy) {
     var pos = dy + this._startPosition;
-    if (pos > 0) pos *= UNDERSCROLL_TRACKING;
-    else if (pos < -this._extent) pos = (pos + this._extent) * UNDERSCROLL_TRACKING - this._extent;
+    if (pos > 0) pos = underscroll(pos, this._length);
+    else if (pos < -this._extent) pos = underscroll(pos + this._extent, this._length) - this._extent;
 
     this._position = pos;
     var transform = 'translateY(' + pos + 'px) translateZ(0)';
