@@ -1,3 +1,8 @@
+body>div {
+    display: inline-block;
+    vertical-align: top;
+}
+
 .scrollingdemo>.scrolling-outer {
     display: inline-block;
     width: 320px;

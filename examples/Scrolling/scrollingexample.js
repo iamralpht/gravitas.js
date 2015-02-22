@@ -18,7 +18,7 @@ limitations under the License.
 /*
  * Scrolling example. Simple list-of-contacts thing from 2007.
  */
-function ScrollingDemo(element) {
+function ScrollingDemo(element, useOverflowScrolling) {
     this._element = element;
     this._element.classList.add('scrollingdemo');
 
@@ -60,13 +60,27 @@ function ScrollingDemo(element) {
     }
 
     this._element.appendChild(this._outer);
+
+    if (useOverflowScrolling) {
+        this._outer.style.overflowY = 'scroll';
+        this._outer.style.overflowX = 'hidden';
+        this._outer.style.WebkitOverflowScrolling = 'touch';
+        var controls = new Controls();
+        controls.addText('Native Overflow Scrolling');
+        this._element.appendChild(controls.element());
+        return;
+    }
     
     var scrollHandler = new ScrollHandler(this._scroller);
     addTouchOrMouseListener(this._outer, scrollHandler);
 
     var controls = new Controls();
-    controls.addModel(scrollHandler.configuration(), 'Scrolling');
+    controls.addModel(scrollHandler.configuration(), 'Gravitas Scrolling');
     this._element.appendChild(controls.element());
 }
 
-window.addEventListener('load', function() { new ScrollingDemo(document.getElementById('scrollingExample')); }, false);
+window.addEventListener('load',
+    function() {
+        new ScrollingDemo(document.getElementById('scrollingExample'));
+        new ScrollingDemo(document.getElementById('overflowScrollingExample'), true);
+    }, false);
