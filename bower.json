@@ -1,0 +1,27 @@
+{
+  "name": "gravitas.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/iamralpht/gravitas.js",
+  "authors": [
+    "Ralph Thomas"
+  ],
+  "description": "Super fast physics simulations for JavaScript",
+  "main": "src/index.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "node"
+  ],
+  "keywords": [
+    "gravity",
+    "javascript"
+  ],
+  "license": "Apache License",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
